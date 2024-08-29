@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Move Image with Arrow Keys</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-image: url("image/Background.png");
+      background-size: cover;
+    }
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #noze {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 25px;
+    }
+    #banana {
+      position: absolute;
+      width: 15px;
+    }
+    #score, #stamina-bar, #ammo-bar {
+      position: absolute;
+      left: 10px;
+      color: #000;
+    }
+    #score {
+      top: 2px;
+      font-size: 10px;
+    }
+    #stamina-bar, #ammo-bar {
+      width: 100px;
+      height: 2px;
+      border: 0.5px solid #000;
+      background-color: #ccc;
+      overflow: hidden;
+    }
+    #stamina-bar {
+      top: 20px;
+      background-color: #ccc;
+    }
+    #stamina {
+      height: 100%;
+      background-color: green;
+    }
+    #ammo-bar {
+      top: 30px;
+      background-color: #ccc;
+    }
+    #ammo {
+      height: 100%;
+      background-color: blue;
+    }
+    .bananaBullet {
+      position: absolute;
+      width: 10px;
+      transform-origin: center;
+      z-index: -1;
+    }
+    .ssal {
+      position: absolute;
+      width: 20px;
+    }
+
+    .rectangle {
+      width: 100vw;
+      height: 100vh;
+      background-color: red;
+      opacity: 0;
+      position: relative;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div class="rectangle"></div>
+    <img src="image/Noze.png" id="noze" alt="Noze Image">
+    <img src="image/Banana.png" id="banana" alt="Banana Image">
+    <div id="score">Score: 0</div>
+    <div class="bars">
+      <div id="stamina-bar"><div id="stamina"></div></div>
+      <div id="ammo-bar"><div id="ammo"></div></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
