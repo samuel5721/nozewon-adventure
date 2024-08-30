@@ -12,18 +12,18 @@ document.addEventListener("DOMContentLoaded", function () {
   let stamina = 100;
   let ammo = 10;
   const maxAmmo = 20;
-  let invincible = false; // for noze invincibility
+  let invincible = false;
 
-  // Velocity and acceleration variables
   let velocityX = 0;
   let velocityY = 0;
-  const acceleration = 0.15;
-  const friction = 0.98;
-  const staminaDecreaseRate = 0.05;
+  const baseAcceleration = 25000;
+  const friction = 0.99;
+  const staminaDecreaseRate = 5;
 
-  // Speeds for bullets and Ssal
-  const bulletSpeed = 10; // Speed for the banana bullet
-  const ssalSpeed = 3; // Speed for Ssal
+  const bulletSpeed = 10;
+  const ssalSpeed = 3;
+
+  let lastTime = performance.now();
 
   setTimeout(() => {
     document.querySelector("#init").style.opacity = 0;
@@ -31,26 +31,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const moveNoze = () => {
     if (stamina > 0) {
-      x += velocityX;
-      y += velocityY;
+      const currentTime = performance.now();
+      const deltaTime = (currentTime - lastTime) / 1000; // seconds since last frame
+      lastTime = currentTime;
 
-      // Apply friction to simulate sliding
+      x += velocityX * deltaTime;
+      y += velocityY * deltaTime;
+
       velocityX *= friction;
       velocityY *= friction;
 
-      // Update position
       nozeImage.style.left = `${x}px`;
       nozeImage.style.top = `${y}px`;
 
       checkCollision();
 
-      // Decrease stamina gradually
-      stamina -= staminaDecreaseRate;
+      stamina -= staminaDecreaseRate * deltaTime;
       if (stamina < 0) stamina = 0;
       updateStaminaBar();
     }
 
-    // Request the next frame for smooth animation
     requestAnimationFrame(moveNoze);
   };
 
@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const nozeRect = nozeImage.getBoundingClientRect();
     const bananaRect = bananaImage.getBoundingClientRect();
 
-    // Check collision between Noze and Banana
     if (
       nozeRect.x < bananaRect.x + bananaRect.width &&
       nozeRect.x + nozeRect.width > bananaRect.x &&
@@ -85,13 +84,13 @@ document.addEventListener("DOMContentLoaded", function () {
       bananaImage.style.display = "none";
       var audio = new Audio("sound/banana_eat.mp3");
       audio.play();
-      this.querySelector("img").src = "image/Noze_eating.png";
+      nozeImage.src = "image/Noze_eating.png";
       setTimeout(() => {
-        this.querySelector("img").src = "image/Noze.png";
+        nozeImage.src = "image/Noze.png";
       }, 300);
       score++;
-      stamina = Math.min(stamina + 10, 100); // Recover stamina when eating a banana
-      ammo = Math.min(ammo + 3, maxAmmo); // Recover ammo when eating a banana
+      stamina = Math.min(stamina + 10, 100);
+      ammo = Math.min(ammo + 3, maxAmmo);
       scoreDisplay.textContent = `Score: ${score}`;
       updateStaminaBar();
       updateAmmoBar();
@@ -101,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }, 0);
     }
 
-    // Check collision between Noze and Ssal
     document.querySelectorAll(".ssal").forEach((ssal) => {
       const ssalRect = ssal.getBoundingClientRect();
       if (
@@ -119,20 +117,20 @@ document.addEventListener("DOMContentLoaded", function () {
           var audio = new Audio("sound/hit.mp3");
           audio.play();
 
-          stamina -= 15; // Reduce stamina if hit by Ssal
+          stamina -= 15;
           if (stamina < 0) stamina = 0;
           updateStaminaBar();
-          invincible = true; // Trigger invincibility
+          invincible = true;
           setTimeout(() => {
             invincible = false;
-          }, 1000); // 1-second invincibility
+          }, 1000);
         }
       }
     });
   };
 
   const shootBananaBullet = (direction) => {
-    if (ammo <= 0) return; // Do not shoot if out of ammo
+    if (ammo <= 0) return;
 
     const bullet = document.createElement("img");
     bullet.src = "image/BananaBullet.png";
@@ -176,7 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
       bullet.style.left = `${bulletX}px`;
       bullet.style.top = `${bulletY}px`;
 
-      // Check collision between BananaBullet and Ssal
       document.querySelectorAll(".ssal").forEach((ssal) => {
         const ssalRect = ssal.getBoundingClientRect();
         const bulletRect = bullet.getBoundingClientRect();
@@ -188,8 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
         ) {
           var audio = new Audio("sound/enemy_hit.mp3");
           audio.play();
-          ssal.remove(); // Ssal disappears when hit by BananaBullet
-          bullet.remove(); // Bullet disappears upon hitting Ssal
+          ssal.remove();
+          bullet.remove();
           clearInterval(moveBullet);
         }
       });
@@ -206,59 +203,55 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 10);
   };
 
-  // Function to spawn Ssal
   const spawnSsal = () => {
     const ssal = document.createElement("img");
     ssal.src = "image/Ssal.png";
     ssal.classList.add("ssal");
-    const spawnEdge = Math.floor(Math.random() * 4); // Random edge: 0 = top, 1 = right, 2 = bottom, 3 = left
+    const spawnEdge = Math.floor(Math.random() * 4);
 
     let ssalX, ssalY, targetX, targetY;
-    let ignoreCollisionFrames = 100; // Ignore collisions for the first 10 frames
+    let ignoreCollisionFrames = 100;
 
     switch (spawnEdge) {
-      case 0: // top
+      case 0:
         ssalX = Math.random() * window.innerWidth;
         ssalY = -20;
         break;
-      case 1: // right
+      case 1:
         ssalX = window.innerWidth + 20;
         ssalY = Math.random() * window.innerHeight;
         break;
-      case 2: // bottom
+      case 2:
         ssalX = Math.random() * window.innerWidth;
         ssalY = window.innerHeight + 20;
         break;
-      case 3: // left
+      case 3:
         ssalX = -20;
         ssalY = Math.random() * window.innerHeight;
         break;
     }
 
-    // Randomly choose one of the three behaviors
     const behavior = Math.floor(Math.random() * 2);
 
     let dx = 0,
       dy = 0;
 
     if (behavior === 0) {
-      // Behavior 1: Move in a straight line until it hits the opposite wall
       switch (spawnEdge) {
-        case 0: // top
+        case 0:
           dy = ssalSpeed;
           break;
-        case 1: // right
+        case 1:
           dx = ssalSpeed * -1;
           break;
-        case 2: // bottom
+        case 2:
           dy = ssalSpeed * -1;
           break;
-        case 3: // left
+        case 3:
           dx = ssalSpeed;
           break;
       }
     } else {
-      // Behavior 3: Always move toward Noze
       setInterval(() => {
         const targetRect = nozeImage.getBoundingClientRect();
         targetX = targetRect.x;
@@ -282,13 +275,12 @@ document.addEventListener("DOMContentLoaded", function () {
       ssal.style.top = `${ssalY}px`;
 
       if (ignoreCollisionFrames > 0) {
-        ignoreCollisionFrames--; // Decrease the collision ignore counter
-        return; // Skip collision detection for this frame
+        ignoreCollisionFrames--;
+        return;
       }
 
       const ssalRect = ssal.getBoundingClientRect();
 
-      // Remove Ssal if it reaches the opposite wall (for straight line behavior)
       if (
         behavior === 0 &&
         (ssalX < 0 ||
@@ -302,10 +294,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 10);
   };
 
-  // Spawn Ssal at regular intervals (every 3 seconds)
   setInterval(spawnSsal, Math.random() * 2500 + 1000);
 
-  // Keydown and keyup event listeners for controlling acceleration
   let keys = {};
 
   window.addEventListener("keydown", function (event) {
@@ -332,28 +322,30 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const updateVelocity = () => {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - lastTime) / 1000; // seconds since last frame
+    lastTime = currentTime;
+
     if (stamina > 0) {
       if (keys["w"]) {
-        velocityY -= acceleration;
+        velocityY -= baseAcceleration * deltaTime;
       }
       if (keys["s"]) {
-        velocityY += acceleration;
+        velocityY += baseAcceleration * deltaTime;
       }
       if (keys["a"]) {
-        velocityX -= acceleration;
-        this.querySelector("img").style.transform = "scaleX(1)";
+        velocityX -= baseAcceleration * deltaTime;
+        nozeImage.style.transform = "scaleX(1)";
       }
       if (keys["d"]) {
-        velocityX += acceleration;
-        this.querySelector("img").style.transform = "scaleX(-1)";
+        velocityX += baseAcceleration * deltaTime;
+        nozeImage.style.transform = "scaleX(-1)";
       }
     }
 
-    // Continue updating the velocity every frame
     requestAnimationFrame(updateVelocity);
   };
 
-  // Start the movement and velocity update loops
   moveNoze();
   updateVelocity();
 
@@ -361,6 +353,5 @@ document.addEventListener("DOMContentLoaded", function () {
   updateStaminaBar();
   updateAmmoBar();
 
-  // Spawn Ssal at random intervals
   setInterval(spawnSsal, 3000);
 });
