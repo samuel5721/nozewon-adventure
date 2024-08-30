@@ -16,14 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let velocityX = 0;
   let velocityY = 0;
-  const baseAcceleration = 25000;
-  const friction = 0.99;
-  const staminaDecreaseRate = 5;
+  const baseAcceleration = 0.3;
+  const friction = 0.98;
+  const staminaDecreaseRate = 0.05;
 
   const bulletSpeed = 10;
   const ssalSpeed = 3;
 
-  let lastTime = performance.now();
+  const frameRate = 1000 / 60; // 60fps 기준
 
   setTimeout(() => {
     document.querySelector("#init").style.opacity = 0;
@@ -31,12 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const moveNoze = () => {
     if (stamina > 0) {
-      const currentTime = performance.now();
-      const deltaTime = (currentTime - lastTime) / 1000; // seconds since last frame
-      lastTime = currentTime;
-
-      x += velocityX * deltaTime;
-      y += velocityY * deltaTime;
+      x += velocityX;
+      y += velocityY;
 
       velocityX *= friction;
       velocityY *= friction;
@@ -46,12 +42,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       checkCollision();
 
-      stamina -= staminaDecreaseRate * deltaTime;
+      stamina -= staminaDecreaseRate;
       if (stamina < 0) stamina = 0;
       updateStaminaBar();
     }
 
-    requestAnimationFrame(moveNoze);
+    setTimeout(moveNoze, frameRate); // 다음 프레임 실행을 위한 타이머 설정
   };
 
   const updateStaminaBar = () => {
@@ -322,28 +318,24 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const updateVelocity = () => {
-    const currentTime = performance.now();
-    const deltaTime = (currentTime - lastTime) / 1000; // seconds since last frame
-    lastTime = currentTime;
-
     if (stamina > 0) {
       if (keys["w"]) {
-        velocityY -= baseAcceleration * deltaTime;
+        velocityY -= baseAcceleration;
       }
       if (keys["s"]) {
-        velocityY += baseAcceleration * deltaTime;
+        velocityY += baseAcceleration;
       }
       if (keys["a"]) {
-        velocityX -= baseAcceleration * deltaTime;
+        velocityX -= baseAcceleration;
         nozeImage.style.transform = "scaleX(1)";
       }
       if (keys["d"]) {
-        velocityX += baseAcceleration * deltaTime;
+        velocityX += baseAcceleration;
         nozeImage.style.transform = "scaleX(-1)";
       }
     }
 
-    requestAnimationFrame(updateVelocity);
+    setTimeout(updateVelocity, frameRate); // 일정한 시간 간격으로 가속도 업데이트
   };
 
   moveNoze();
