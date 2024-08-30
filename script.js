@@ -17,9 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
   // Velocity and acceleration variables
   let velocityX = 0;
   let velocityY = 0;
-  const acceleration = 0.025;
+  const acceleration = 0.25;
   const friction = 0.98;
   const staminaDecreaseRate = 0.05;
+
+  // Speeds for bullets and Ssal
+  const bulletSpeed = 10; // Speed for the banana bullet
+  const ssalSpeed = 3; // Speed for Ssal
 
   const moveNoze = () => {
     if (stamina > 0) {
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
           var audio = new Audio("sound/hit.mp3");
           audio.play();
 
-          stamina -= 10; // Reduce stamina if hit by Ssal
+          stamina -= 15; // Reduce stamina if hit by Ssal
           if (stamina < 0) stamina = 0;
           updateStaminaBar();
           invincible = true; // Trigger invincibility
@@ -132,27 +136,25 @@ document.addEventListener('DOMContentLoaded', function() {
     bullet.style.left = `${x}px`;
     bullet.style.top = `${y}px`;
 
-    let speed = 2;
-    let angle = 0;
     let dx = 0;
     let dy = 0;
 
     switch(direction) {
       case 'ArrowUp':
       case 'w':
-        dy = speed * -1;
+        dy = bulletSpeed * -1;
         break;
       case 'ArrowDown':
       case 's':
-        dy = speed;
+        dy = bulletSpeed;
         break;
       case 'ArrowLeft':
       case 'a':
-        dx = speed * -1;
+        dx = bulletSpeed * -1;
         break;
       case 'ArrowRight':
       case 'd':
-        dx = speed;
+        dx = bulletSpeed;
         break;
     }
 
@@ -169,8 +171,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
       bullet.style.left = `${bulletX}px`;
       bullet.style.top = `${bulletY}px`;
-      angle -= 5;
-      bullet.style.transform = `rotate(${angle}deg)`;
 
       // Check collision between BananaBullet and Ssal
       document.querySelectorAll('.ssal').forEach(ssal => {
@@ -232,36 +232,34 @@ const spawnSsal = () => {
   // Randomly choose one of the three behaviors
   const behavior = Math.floor(Math.random() * 2);
 
-  let dx = 0, dy = 0, speed = 1;
+  let dx = 0, dy = 0;
   
   if (behavior === 0) {
     // Behavior 1: Move in a straight line until it hits the opposite wall
     switch(spawnEdge) {
       case 0: // top
-        dy = speed;
+        dy = ssalSpeed;
         break;
       case 1: // right
-        dx = -speed;
+        dx = ssalSpeed * -1;
         break;
       case 2: // bottom
-        dy = -speed;
+        dy = ssalSpeed * -1;
         break;
       case 3: // left
-        dx = speed;
+        dx = ssalSpeed;
         break;
     }
   } else {
     // Behavior 3: Always move toward Noze
-    
-
     setInterval(() => {
       const targetRect = nozeImage.getBoundingClientRect();
       targetX = targetRect.x;
       targetY = targetRect.y;
 
       const angle = Math.atan2(targetY - ssalY, targetX - ssalX);
-      dx = Math.cos(angle) * speed;
-      dy = Math.sin(angle) * speed;
+      dx = Math.cos(angle) * ssalSpeed;
+      dy = Math.sin(angle) * ssalSpeed;
     }, 100);
   }
 
@@ -296,7 +294,7 @@ const spawnSsal = () => {
 };
 
 // Spawn Ssal at regular intervals (every 3 seconds)
-setInterval(spawnSsal, Math.random() * 3000+1000);
+setInterval(spawnSsal, Math.random() * 2000+1000);
 
   // Keydown and keyup event listeners for controlling acceleration
   let keys = {};
