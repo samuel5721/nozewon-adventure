@@ -25,7 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const bulletSpeed = 10; // Speed for the banana bullet
   const ssalSpeed = 3; // Speed for Ssal
 
+  setTimeout(() => {
+  document.querySelector('#init').style.opacity = 0;
+  }, 3000);
+
   const moveNoze = () => {
+
     if (stamina > 0) {
       x += velocityX;
       y += velocityY;
@@ -294,7 +299,7 @@ const spawnSsal = () => {
 };
 
 // Spawn Ssal at regular intervals (every 3 seconds)
-setInterval(spawnSsal, Math.random() * 2000+1000);
+setInterval(spawnSsal, Math.random() * 2500+1000);
 
   // Keydown and keyup event listeners for controlling acceleration
   let keys = {};

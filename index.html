@@ -83,11 +83,27 @@
       position: relative;
       overflow: hidden;
     }
+
+    #init {
+      width: 500px;
+      height: 100px;
+      position: absolute;
+      top: 80%;
+      background-color: gray;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
   <div id="container">
     <div class="rectangle"></div>
+    <div id="init">
+      <p>wasd로 이동</p>
+      <p>화살표 방향키로 발사</p>
+    </div>
     <img src="image/Noze.png" id="noze" alt="Noze Image">
     <img src="image/Banana.png" id="banana" alt="Banana Image">
     <div id="score">Score: 0</div>
