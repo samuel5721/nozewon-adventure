@@ -1,11 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const nozeImage = document.getElementById('noze');
-  const bananaImage = document.getElementById('banana');
-  const scoreDisplay = document.getElementById('score');
-  const staminaBar = document.getElementById('stamina');
-  const ammoBar = document.getElementById('ammo');
-  const container = document.getElementById('container');
-  
+document.addEventListener("DOMContentLoaded", function () {
+  const nozeImage = document.getElementById("noze");
+  const bananaImage = document.getElementById("banana");
+  const scoreDisplay = document.getElementById("score");
+  const staminaBar = document.getElementById("stamina");
+  const ammoBar = document.getElementById("ammo");
+  const container = document.getElementById("container");
+
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
   let score = 0;
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Velocity and acceleration variables
   let velocityX = 0;
   let velocityY = 0;
-  const acceleration = 0.25;
+  const acceleration = 0.15;
   const friction = 0.98;
   const staminaDecreaseRate = 0.05;
 
@@ -26,19 +26,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const ssalSpeed = 3; // Speed for Ssal
 
   setTimeout(() => {
-  document.querySelector('#init').style.opacity = 0;
+    document.querySelector("#init").style.opacity = 0;
   }, 3000);
 
   const moveNoze = () => {
-
     if (stamina > 0) {
       x += velocityX;
       y += velocityY;
-  
+
       // Apply friction to simulate sliding
       velocityX *= friction;
       velocityY *= friction;
-  
+
       // Update position
       nozeImage.style.left = `${x}px`;
       nozeImage.style.top = `${y}px`;
@@ -78,17 +77,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check collision between Noze and Banana
     if (
-      (nozeRect.x < bananaRect.x + bananaRect.width &&
+      nozeRect.x < bananaRect.x + bananaRect.width &&
       nozeRect.x + nozeRect.width > bananaRect.x &&
       nozeRect.y < bananaRect.y + bananaRect.height &&
-      nozeRect.y + nozeRect.height > bananaRect.y)
+      nozeRect.y + nozeRect.height > bananaRect.y
     ) {
-      bananaImage.style.display = 'none';
+      bananaImage.style.display = "none";
       var audio = new Audio("sound/banana_eat.mp3");
       audio.play();
-      this.querySelector('img').src = 'image/Noze_eating.png';
+      this.querySelector("img").src = "image/Noze_eating.png";
       setTimeout(() => {
-        this.querySelector('img').src = 'image/Noze.png';
+        this.querySelector("img").src = "image/Noze.png";
       }, 300);
       score++;
       stamina = Math.min(stamina + 10, 100); // Recover stamina when eating a banana
@@ -97,13 +96,13 @@ document.addEventListener('DOMContentLoaded', function() {
       updateStaminaBar();
       updateAmmoBar();
       setTimeout(() => {
-        bananaImage.style.display = 'block';
+        bananaImage.style.display = "block";
         randomPosition();
       }, 0);
     }
 
     // Check collision between Noze and Ssal
-    document.querySelectorAll('.ssal').forEach(ssal => {
+    document.querySelectorAll(".ssal").forEach((ssal) => {
       const ssalRect = ssal.getBoundingClientRect();
       if (
         nozeRect.x < ssalRect.x + ssalRect.width &&
@@ -112,9 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
         nozeRect.y + nozeRect.height > ssalRect.y
       ) {
         if (!invincible) {
-          document.querySelector('.rectangle').style.opacity = 0.5;
+          document.querySelector(".rectangle").style.opacity = 0.5;
           setTimeout(() => {
-            document.querySelector('.rectangle').style.opacity = 0;
+            document.querySelector(".rectangle").style.opacity = 0;
           }, 250);
 
           var audio = new Audio("sound/hit.mp3");
@@ -135,30 +134,30 @@ document.addEventListener('DOMContentLoaded', function() {
   const shootBananaBullet = (direction) => {
     if (ammo <= 0) return; // Do not shoot if out of ammo
 
-    const bullet = document.createElement('img');
-    bullet.src = 'image/BananaBullet.png';
-    bullet.classList.add('bananaBullet');
+    const bullet = document.createElement("img");
+    bullet.src = "image/BananaBullet.png";
+    bullet.classList.add("bananaBullet");
     bullet.style.left = `${x}px`;
     bullet.style.top = `${y}px`;
 
     let dx = 0;
     let dy = 0;
 
-    switch(direction) {
-      case 'ArrowUp':
-      case 'w':
+    switch (direction) {
+      case "ArrowUp":
+      case "w":
         dy = bulletSpeed * -1;
         break;
-      case 'ArrowDown':
-      case 's':
+      case "ArrowDown":
+      case "s":
         dy = bulletSpeed;
         break;
-      case 'ArrowLeft':
-      case 'a':
+      case "ArrowLeft":
+      case "a":
         dx = bulletSpeed * -1;
         break;
-      case 'ArrowRight':
-      case 'd':
+      case "ArrowRight":
+      case "d":
         dx = bulletSpeed;
         break;
     }
@@ -178,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
       bullet.style.top = `${bulletY}px`;
 
       // Check collision between BananaBullet and Ssal
-      document.querySelectorAll('.ssal').forEach(ssal => {
+      document.querySelectorAll(".ssal").forEach((ssal) => {
         const ssalRect = ssal.getBoundingClientRect();
         const bulletRect = bullet.getBoundingClientRect();
         if (
@@ -196,8 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       if (
-        bulletX < 0 || bulletX > window.innerWidth ||
-        bulletY < 0 || bulletY > window.innerHeight
+        bulletX < 0 ||
+        bulletX > window.innerWidth ||
+        bulletY < 0 ||
+        bulletY > window.innerHeight
       ) {
         clearInterval(moveBullet);
         bullet.remove();
@@ -205,143 +206,146 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 10);
   };
 
-// Function to spawn Ssal
-const spawnSsal = () => {
-  const ssal = document.createElement('img');
-  ssal.src = 'image/Ssal.png';
-  ssal.classList.add('ssal');
-  const spawnEdge = Math.floor(Math.random() * 4); // Random edge: 0 = top, 1 = right, 2 = bottom, 3 = left
+  // Function to spawn Ssal
+  const spawnSsal = () => {
+    const ssal = document.createElement("img");
+    ssal.src = "image/Ssal.png";
+    ssal.classList.add("ssal");
+    const spawnEdge = Math.floor(Math.random() * 4); // Random edge: 0 = top, 1 = right, 2 = bottom, 3 = left
 
-  let ssalX, ssalY, targetX, targetY;
-  let ignoreCollisionFrames = 100; // Ignore collisions for the first 10 frames
-  
-  switch(spawnEdge) {
-    case 0: // top
-      ssalX = Math.random() * window.innerWidth;
-      ssalY = -20;
-      break;
-    case 1: // right
-      ssalX = window.innerWidth + 20;
-      ssalY = Math.random() * window.innerHeight;
-      break;
-    case 2: // bottom
-      ssalX = Math.random() * window.innerWidth;
-      ssalY = window.innerHeight + 20;
-      break;
-    case 3: // left
-      ssalX = -20;
-      ssalY = Math.random() * window.innerHeight;
-      break;
-  }
+    let ssalX, ssalY, targetX, targetY;
+    let ignoreCollisionFrames = 100; // Ignore collisions for the first 10 frames
 
-  // Randomly choose one of the three behaviors
-  const behavior = Math.floor(Math.random() * 2);
-
-  let dx = 0, dy = 0;
-  
-  if (behavior === 0) {
-    // Behavior 1: Move in a straight line until it hits the opposite wall
-    switch(spawnEdge) {
+    switch (spawnEdge) {
       case 0: // top
-        dy = ssalSpeed;
+        ssalX = Math.random() * window.innerWidth;
+        ssalY = -20;
         break;
       case 1: // right
-        dx = ssalSpeed * -1;
+        ssalX = window.innerWidth + 20;
+        ssalY = Math.random() * window.innerHeight;
         break;
       case 2: // bottom
-        dy = ssalSpeed * -1;
+        ssalX = Math.random() * window.innerWidth;
+        ssalY = window.innerHeight + 20;
         break;
       case 3: // left
-        dx = ssalSpeed;
+        ssalX = -20;
+        ssalY = Math.random() * window.innerHeight;
         break;
     }
-  } else {
-    // Behavior 3: Always move toward Noze
-    setInterval(() => {
-      const targetRect = nozeImage.getBoundingClientRect();
-      targetX = targetRect.x;
-      targetY = targetRect.y;
 
-      const angle = Math.atan2(targetY - ssalY, targetX - ssalX);
-      dx = Math.cos(angle) * ssalSpeed;
-      dy = Math.sin(angle) * ssalSpeed;
-    }, 100);
-  }
+    // Randomly choose one of the three behaviors
+    const behavior = Math.floor(Math.random() * 2);
 
-  ssal.style.left = `${ssalX}px`;
-  ssal.style.top = `${ssalY}px`;
+    let dx = 0,
+      dy = 0;
 
-  container.appendChild(ssal);
+    if (behavior === 0) {
+      // Behavior 1: Move in a straight line until it hits the opposite wall
+      switch (spawnEdge) {
+        case 0: // top
+          dy = ssalSpeed;
+          break;
+        case 1: // right
+          dx = ssalSpeed * -1;
+          break;
+        case 2: // bottom
+          dy = ssalSpeed * -1;
+          break;
+        case 3: // left
+          dx = ssalSpeed;
+          break;
+      }
+    } else {
+      // Behavior 3: Always move toward Noze
+      setInterval(() => {
+        const targetRect = nozeImage.getBoundingClientRect();
+        targetX = targetRect.x;
+        targetY = targetRect.y;
 
-  const moveSsal = setInterval(() => {
-    ssalX += dx;
-    ssalY += dy;
+        const angle = Math.atan2(targetY - ssalY, targetX - ssalX);
+        dx = Math.cos(angle) * ssalSpeed;
+        dy = Math.sin(angle) * ssalSpeed;
+      }, 100);
+    }
+
     ssal.style.left = `${ssalX}px`;
     ssal.style.top = `${ssalY}px`;
 
-    if (ignoreCollisionFrames > 0) {
-      ignoreCollisionFrames--; // Decrease the collision ignore counter
-      return; // Skip collision detection for this frame
-    }
+    container.appendChild(ssal);
 
-    const ssalRect = ssal.getBoundingClientRect();
+    const moveSsal = setInterval(() => {
+      ssalX += dx;
+      ssalY += dy;
+      ssal.style.left = `${ssalX}px`;
+      ssal.style.top = `${ssalY}px`;
 
-    // Remove Ssal if it reaches the opposite wall (for straight line behavior)
-    if (behavior === 0 && (
-      ssalX < 0 || ssalX > window.innerWidth ||
-      ssalY < 0 || ssalY > window.innerHeight
-    )) {
-      clearInterval(moveSsal);
-      ssal.remove();
-    }
+      if (ignoreCollisionFrames > 0) {
+        ignoreCollisionFrames--; // Decrease the collision ignore counter
+        return; // Skip collision detection for this frame
+      }
 
-  }, 10);
-};
+      const ssalRect = ssal.getBoundingClientRect();
 
-// Spawn Ssal at regular intervals (every 3 seconds)
-setInterval(spawnSsal, Math.random() * 2500+1000);
+      // Remove Ssal if it reaches the opposite wall (for straight line behavior)
+      if (
+        behavior === 0 &&
+        (ssalX < 0 ||
+          ssalX > window.innerWidth ||
+          ssalY < 0 ||
+          ssalY > window.innerHeight)
+      ) {
+        clearInterval(moveSsal);
+        ssal.remove();
+      }
+    }, 10);
+  };
+
+  // Spawn Ssal at regular intervals (every 3 seconds)
+  setInterval(spawnSsal, Math.random() * 2500 + 1000);
 
   // Keydown and keyup event listeners for controlling acceleration
   let keys = {};
 
-  window.addEventListener('keydown', function(event) {
+  window.addEventListener("keydown", function (event) {
     keys[event.key] = true;
 
     if (event.repeat) return;
 
-    if (event.key === 'ArrowUp') {
-      shootBananaBullet('ArrowUp');
+    if (event.key === "ArrowUp") {
+      shootBananaBullet("ArrowUp");
     }
-    if (event.key === 'ArrowDown') {
-      shootBananaBullet('ArrowDown');
+    if (event.key === "ArrowDown") {
+      shootBananaBullet("ArrowDown");
     }
-    if (event.key === 'ArrowLeft') {
-      shootBananaBullet('ArrowLeft');
+    if (event.key === "ArrowLeft") {
+      shootBananaBullet("ArrowLeft");
     }
-    if (event.key === 'ArrowRight') {
-      shootBananaBullet('ArrowRight');
+    if (event.key === "ArrowRight") {
+      shootBananaBullet("ArrowRight");
     }
   });
 
-  window.addEventListener('keyup', function(event) {
+  window.addEventListener("keyup", function (event) {
     keys[event.key] = false;
   });
 
   const updateVelocity = () => {
     if (stamina > 0) {
-      if (keys['w']) {
+      if (keys["w"]) {
         velocityY -= acceleration;
       }
-      if (keys['s']) {
+      if (keys["s"]) {
         velocityY += acceleration;
       }
-      if (keys['a']) {
+      if (keys["a"]) {
         velocityX -= acceleration;
-        this.querySelector('img').style.transform = 'scaleX(1)';
+        this.querySelector("img").style.transform = "scaleX(1)";
       }
-      if (keys['d']) {
+      if (keys["d"]) {
         velocityX += acceleration;
-        this.querySelector('img').style.transform = 'scaleX(-1)';
+        this.querySelector("img").style.transform = "scaleX(-1)";
       }
     }
 
